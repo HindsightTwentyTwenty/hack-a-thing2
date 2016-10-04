@@ -25,7 +25,7 @@ function showSavedUrls(urls) {
 }
 
 var currUrl;
-var savedUrls = [];
+var savedUrls;
 
 document.addEventListener('DOMContentLoaded', function() {
   getCurrentTabUrl(function(url) {
@@ -34,30 +34,26 @@ document.addEventListener('DOMContentLoaded', function() {
     currentUrl.appendChild(newContent);
     currUrl = url;
   });
-  chrome.storage.sync.get('urls', function(result) {
+  chrome.storage.sync.get("urls", function(result) {
     console.log("Stringi "  + JSON.stringify(result));
-    savedUrls = result;
-    console.log("getting urls: " + JSON.stringify(result.urls));
+    savedUrls = result.urls;
+    console.log("getting urls: " + JSON.stringify(savedUrls));
     // showSavedUrls(savedUrls);
   });
   document.getElementById('clearButton').addEventListener("click", function(){
-    console.log("Clearing clicked");
-    chrome.storage.sync.clear();
-    urlList.innerHTML = "";
+    chrome.storage.sync.remove("urls");
+    savedUrls=[];
+    showSavedUrls(savedUrls);
   });
   document.getElementById('saveButton').addEventListener("click", function(){
-    console.log("Button clicked");
     if (!currUrl) {
       console.log("Error: No URL to save.");
       return;
     }
-    var localList = [];
-    localList.push(currUrl);
-    // savedUrls.push(currUrl);
-    console.log("currUrl: " + currUrl);
-    chrome.storage.sync.set({'urls' : localList}, function() {
+    savedUrls.push(currUrl);
+    chrome.storage.sync.set({"urls": savedUrls}, function() {
         console.log('Data successfully saved to the storage!');
     });
-    showSavedUrls(localList);
+    showSavedUrls(savedUrls);
   });
 })
