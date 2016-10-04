@@ -1,5 +1,5 @@
 #Starring Webpages: Chrome extension
-We built of the following tutorial:  
+We built of off the following tutorial:  
 https://developer.chrome.com/extensions/getstarted.
 
 We developed a chrome extension that allows the user to save the url of the page
