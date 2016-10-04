@@ -35,10 +35,14 @@ document.addEventListener('DOMContentLoaded', function() {
     currUrl = url;
   });
   chrome.storage.sync.get("urls", function(result) {
-    console.log("Stringi "  + JSON.stringify(result));
-    savedUrls = result.urls;
-    console.log("getting urls: " + JSON.stringify(savedUrls));
-    // showSavedUrls(savedUrls);
+    if (!result.urls) {
+      savedUrls = [];
+      console.log("No urls were saved. Creating empty array.")
+    } else {
+      savedUrls = result.urls;
+      console.log("Getting saved urls: " + JSON.stringify(savedUrls));
+      showSavedUrls(savedUrls);
+    }
   });
   document.getElementById('clearButton').addEventListener("click", function(){
     chrome.storage.sync.remove("urls");
