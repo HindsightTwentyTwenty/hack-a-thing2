@@ -17,8 +17,7 @@ function showSavedUrls(urls) {
   var urlList = document.getElementById("urlList");
   var urlListString = "";
   for (var i = 0; i < urls.length; i++) {
-    console.log(urls[i]);
-    var url = urls[i] + ' \n';
+    var url = urls[i].string + ' \n';
     urlListString += url;
   }
   urlList.innerHTML = urlListString;
@@ -54,7 +53,21 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log("Error: No URL to save.");
       return;
     }
-    savedUrls.push(currUrl);
+    url = {};
+    url.string = currUrl;
+    url.time = (new Date(new Date().getTime())).toString();
+    var found = false;
+    for(var i = 0; i < savedUrls.length; i++) {
+      if (savedUrls[i].string === url.string) {
+          found = true;
+          break;
+      }
+    }
+    if (found) {
+      console.log(url.string + " is already saved");
+    } else {
+      savedUrls.push(url);
+    }
     chrome.storage.sync.set({"urls": savedUrls}, function() {
         console.log('Data successfully saved to the storage!');
     });
