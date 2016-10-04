@@ -3,21 +3,12 @@
   "name": "iBrowse",
   "version": "0.1",
   "permissions": [
-    "tabs"
+    "activeTab", 
+    "storage"
   ],
-	"content_scripts": [
-	  {
-	    "matches": [
-	      "<all_urls>"
-	    ],
-	    "js": ["star.js"]
-	  }
-	],
+
 	"browser_action": {
-	  "default_icon": "icon.png"
-    /*"default_popup": "starContainer.html"*/
-	},
-	"background": {
-	  "scripts": ["background.js"]
+	  "default_icon": "icon.png",
+    "default_popup": "starContainer.html"
 	}
 }
