@@ -12,19 +12,21 @@ function getCurrentTabUrl(callback) {
     callback(url);
   });
 }
+
 function showSavedUrls(urls) {
-  console.log("Trying to save");
-  var savedUrlContainer = document.getElementById("starContainer");
-  // console.log("urls.data: " + urls.data);
-  for (var i = 0; i < urls.data.length; i++) {
-    console.log(urls.data[i].currUrl);
-    var url = document.createTextNode(urls.data[i].currUrl + '\n');
-    savedUrlContainer.appendChild(url);
+  var urlList = document.getElementById("urlList");
+  var urlListString = "";
+  for (var i = 0; i < urls.length; i++) {
+    console.log(urls[i]);
+    var url = urls[i] + ' \n';
+    urlListString += url;
   }
+  urlList.innerHTML = urlListString;
 }
 
 var currUrl;
-var savedUrls;
+var savedUrls = [];
+
 document.addEventListener('DOMContentLoaded', function() {
   getCurrentTabUrl(function(url) {
     var currentUrl = document.getElementById('currentUrl');
@@ -32,10 +34,16 @@ document.addEventListener('DOMContentLoaded', function() {
     currentUrl.appendChild(newContent);
     currUrl = url;
   });
-  chrome.storage.sync.get(function(urls) {
-    savedUrls = urls;
-    console.log("getting urls: " + urls);
-    showSavedUrls(savedUrls);
+  chrome.storage.sync.get('urls', function(result) {
+    console.log("Stringi "  + JSON.stringify(result));
+    savedUrls = result;
+    console.log("getting urls: " + JSON.stringify(result.urls));
+    // showSavedUrls(savedUrls);
+  });
+  document.getElementById('clearButton').addEventListener("click", function(){
+    console.log("Clearing clicked");
+    chrome.storage.sync.clear();
+    urlList.innerHTML = "";
   });
   document.getElementById('saveButton').addEventListener("click", function(){
     console.log("Button clicked");
@@ -43,18 +51,13 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log("Error: No URL to save.");
       return;
     }
-    // http://stackoverflow.com/questions/27879835/adding-new-objects-to-chrome-local-storage
-    // chrome.storage.sync.get(function(urls) {
-    //   if (Object.keys(urls).length > 0 && urls.data) {
-    //       urls.data.push({currUrl: currUrl});
-    //   } else {
-    //       urls.data = [{currUrl: currUrl}];
-    //   }
-    savedUrls.data.push({currUrl: currUrl});
+    var localList = [];
+    localList.push(currUrl);
+    // savedUrls.push(currUrl);
     console.log("currUrl: " + currUrl);
-    chrome.storage.sync.set(savedUrls, function() {
+    chrome.storage.sync.set({'urls' : localList}, function() {
         console.log('Data successfully saved to the storage!');
     });
-    showSavedUrls(savedUrls);
+    showSavedUrls(localList);
   });
 })
