@@ -37,10 +37,8 @@ document.addEventListener('DOMContentLoaded', function() {
   chrome.storage.sync.get("urls", function(result) {
     if (!result.urls) {
       savedUrls = [];
-      console.log("No urls were saved. Creating empty array.")
     } else {
       savedUrls = result.urls;
-      console.log("Getting saved urls: " + JSON.stringify(savedUrls));
       showSavedUrls(savedUrls);
     }
   });
@@ -54,10 +52,20 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log("Error: No URL to save.");
       return;
     }
-    savedUrls.push(currUrl);
-    chrome.storage.sync.set({"urls": savedUrls}, function() {
+    var found = false;
+    for(var i = 0; i < savedUrls.length; i++) {
+      if(!found) {
+        if(savedUrls[i] === currUrl){
+          found = true;
+        }
+      }
+    }
+    if (!found){
+      savedUrls.push(currUrl);
+      chrome.storage.sync.set({"urls": savedUrls}, function() {
         console.log('Data successfully saved to the storage!');
-    });
-    showSavedUrls(savedUrls);
+      });
+      showSavedUrls(savedUrls);
+    }
   });
 })
