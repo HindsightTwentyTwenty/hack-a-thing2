@@ -1,5 +1,4 @@
 // star.js
-// followed tutorial from: https://developer.chrome.com/extensions/getstarted
 function getCurrentTabUrl(callback) {
   var queryInfo = {
     active: true,
@@ -48,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   document.getElementById('saveButton').addEventListener("click", function(){
     if (!currUrl) {
-      console.log("Error: No URL to save.");
+      console.log('Error: No URL to save.');
       return;
     }
     url = {};
@@ -62,14 +61,13 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     if (found) {
-      console.log(url.string + " is already saved");
+      console.log(url.string + ' is already saved');
     } else {
       savedUrls.push(url);
     }
     chrome.storage.sync.set({"urls": savedUrls}, function() {
         console.log('Data successfully saved to the storage!');
       });
-      showSavedUrls(savedUrls);
-    }
+    showSavedUrls(savedUrls);
   });
-})
+});
