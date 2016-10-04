@@ -36,10 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
   chrome.storage.sync.get("urls", function(result) {
     if (!result.urls) {
       savedUrls = [];
-      console.log("No urls were saved. Creating empty array.")
     } else {
       savedUrls = result.urls;
-      console.log("Getting saved urls: " + JSON.stringify(savedUrls));
       showSavedUrls(savedUrls);
     }
   });
@@ -70,7 +68,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     chrome.storage.sync.set({"urls": savedUrls}, function() {
         console.log('Data successfully saved to the storage!');
-    });
-    showSavedUrls(savedUrls);
+      });
+      showSavedUrls(savedUrls);
+    }
   });
 })
