@@ -8,7 +8,9 @@ function getCurrentTabUrl(callback) {
   chrome.tabs.query(queryInfo, function(tabs) {
     var tab = tabs[0];
     var url = tab.url;
-    callback(url);
+    var title = tab.title;
+
+    callback({"url": url, "title": title});
   });
 }
 
@@ -16,7 +18,12 @@ function showSavedUrls(urls) {
   var urlList = document.getElementById("urlList");
   var urlListString = "";
   for (var i = 0; i < urls.length; i++) {
-    var url = urls[i].string + ' \n';
+    var url;
+    if (urls[i].title) {
+      url = urls[i].title + ' \n'
+    } else {
+      url = urls[i].string + ' \n';
+    }
     urlListString += url;
   }
   urlList.innerHTML = urlListString;
@@ -26,11 +33,11 @@ var currUrl;
 var savedUrls;
 
 document.addEventListener('DOMContentLoaded', function() {
-  getCurrentTabUrl(function(url) {
+  getCurrentTabUrl(function(result) {
     var currentUrl = document.getElementById('currentUrl');
-    var newContent = document.createTextNode(url);
+    var newContent = document.createTextNode(result.url);
     currentUrl.appendChild(newContent);
-    currUrl = url;
+    currUrl = result;
   });
   chrome.storage.sync.get("urls", function(result) {
     if (!result.urls) {
@@ -46,12 +53,13 @@ document.addEventListener('DOMContentLoaded', function() {
     showSavedUrls(savedUrls);
   });
   document.getElementById('saveButton').addEventListener("click", function(){
-    if (!currUrl) {
+    if (!currUrl.url) {
       console.log('Error: No URL to save.');
       return;
     }
     url = {};
-    url.string = currUrl;
+    url.string = currUrl.url;
+    url.title = currUrl.title;
     url.time = (new Date(new Date().getTime())).toString();
     var found = false;
     for(var i = 0; i < savedUrls.length; i++) {
